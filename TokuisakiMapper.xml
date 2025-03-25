@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smalog.mapper.TokuisakiMapper">
+  <select id="getHanbaitenList" resultType="com.smalog.dto.TokuisakiDTO">
+    SELECT
+      得意先マスタ.得意先コード AS tokuisakiCode
+      , 得意先マスタ.得意先名 AS tokuisakiName
+      , 得意先マスタ.得意先カナ名 AS tokuisakiNameKana
+    FROM
+      得意先マスタ 
+    <where>
+      会社区分コード = #{kaishaKubunCode}
+      <if test="tokuisakiCode != null and tokuisakiCode != ''">
+        AND 得意先コード = #{tokuisakiCode}
+      </if>
+      <if test="tokuisakiName != null and tokuisakiName != ''">
+        AND 得意先名 LIKE CONCAT('%', #{tokuisakiName}, '%')
+      </if>
+      <if test="tokuisakiNameKana != null and tokuisakiNameKana != ''">
+        AND 得意先カナ名 LIKE CONCAT('%', #{tokuisakiNameKana}, '%')
+      </if>
+    </where>
+  </select>
+
+  <select id="findTokuisaki" resultType="com.smalog.dto.TokuisakiDTO">
+    SELECT
+      得意先マスタ.得意先コード AS tokuisakiCode
+      , 得意先マスタ.得意先名 AS tokuisakiName
+      , 得意先マスタ.得意先カナ名 AS tokuisakiNameKana
+    FROM
+      得意先マスタ 
+    <where>
+      会社区分コード = #{kaishaKubunCode}
+      AND 得意先コード = #{tokuisakiCode}
+    </where>
+  </select>
+
+</mapper>

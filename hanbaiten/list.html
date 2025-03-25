@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{common/layout.html}" th:with="jsFiles=${ {'/plugins/jsgrid/jsgrid.min.js', '/js/hanbaiten-list.js'} }, cssFiles=${ {'/plugins/jsgrid/jsgrid.min.css', '/plugins/jsgrid/jsgrid-theme.min.css'} }">
+
+	<div class="content" layout:fragment="content">
+		<div class="container-fluid default-content">
+			<form th:action="@{/hanbaiten/list}" id="hanbaitenListForm" th:method="post" th:object="${listForm}">
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="card">
+							<div class="card-body">
+								<div class="row">
+									<div class="col-lg-4">
+										<div class="form-group">
+											<label for="tokuisakiCode">得意先コード</label>
+											<input type="text" class="form-control" th:field="*{tokuisakiCode}">
+											<div class="invalid-feedback" id="errorMessage.tokuisakiCode"></div>
+											<!-- submit時のエラー表示例 -->
+											<!-- <input type="text" class="form-control" th:classappend="${#fields.hasErrors('tokuisakiCode')} ? 'is-invalid' : ''" th:field="*{tokuisakiCode}">
+											<div class="invalid-feedback" id="errorMessage.tokuisakiCode" th:errors="*{tokuisakiCode}"></div> -->
+										</div>
+									</div>
+									<div class="col-lg-4">
+										<div class="form-group">
+											<label for="tokuisakiName">得意先名</label>
+											<input type="text" class="form-control" th:field="*{tokuisakiName}">
+											<div class="invalid-feedback" id="errorMessage.tokuisakiName"></div>
+										</div>
+									</div>
+									<div class="col-lg-4">
+										<div class="form-group">
+											<label for="tokuisakiNameKana">得意先名カナ</label>
+											<input type="text" class="form-control" th:field="*{tokuisakiNameKana}">
+											<div class="invalid-feedback" id="errorMessage.tokuisakiNameKana"></div>
+										</div>
+									</div>
+								</div>
+
+								<!-- 入れ子になっている場合のエラー表示例 -->
+								<!-- <div class="row">
+									<div class="col-lg-4">
+										<div class="form-group">
+											<label>テスト</label> -->
+											<!-- ajaxの場合のエラー表示例 -->
+											<!-- <div th:each="testItem, stat : *{test}">
+												<input type="text" class="form-control" th:field="*{test[__${stat.index}__].code}" placeholder="コード" />
+												<div class="invalid-feedback" th:id="'errorMessage.test[' + ${stat.index} + '].code'"></div>
+											</div> -->
+
+											<!-- submit時のエラー表示例 -->
+											<!-- <div th:each="testItem, stat : *{test}">
+												<input type="text" class="form-control" th:classappend="${#fields.hasErrors('test[' + stat.index + '].code')} ? 'is-invalid' : ''" th:field="*{test[__${stat.index}__].code}" placeholder="コード" />
+												<div class="invalid-feedback" th:errors="*{test[__${stat.index}__].code}"></div>
+											</div> -->
+										<!-- </div>
+									</div>
+								</div> -->
+								
+								<div class="row">
+									<div class="col-lg-12 text-center">
+										<button type="submit" id="btnSearch" class="btn btn-primary">検索</button>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="card">
+							<div class="card-header">
+							</div>
+							<div class="card-body grid-area">
+								<div class="grid-info" th:insert="~{element/list-default-grid(gridId='hanbaitenListJsGrid', count=0, isShowCopyAndDeleteDescription=false)}"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+			</form>
+		</div>
+	</div>
+	
+</html>

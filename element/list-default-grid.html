@@ -1,0 +1,11 @@
+
+<div class="row grid-description-area">
+    <div class="col-sm-8">
+        <label th:id="${gridId} + 'CountInfo'">[[${count}]] 件</label>
+    </div>
+    <div class="col-sm-4 text-right" th:if="${isShowCopyAndDeleteDescription}">
+        <i class="fas fa-copy text-primary"><span>:コピー&nbsp;</span></i>
+        <i class="fas fa-trash text-danger"><span>:削除</span></i>
+    </div>
+</div>
+<div th:id="${gridId}"></div>

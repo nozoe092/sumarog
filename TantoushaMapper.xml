@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smalog.mapper.TantoushaMapper">
+    <select id="getTokuisakiTantousha" resultType="com.smalog.dto.TantoushaInfoDTO">
+        SELECT
+          * 
+        FROM
+          ( 
+            SELECT
+              a.得意先コード AS tokuisakiCode
+              , a.得意先名 AS tokuisakiName
+              , b.担当者番号 AS tantoushaNumber
+              , b.パスワード AS password
+              , b.担当者名 AS tantoushaName
+              , b.公開レベル AS publicLevel
+              , a.会社コード AS kaishaCode
+              , c.会社名 AS kaishaName
+              , a.会社区分コード AS kaishaKubunCode
+              , a.期間条件 AS periodCondition
+              , '0' AS adminFlag
+              , a.ＷＥＢ２０００管理フラグ AS web2000ManagementFlag
+              , '1' AS externalPublicFlag
+              , a.サンリッチ取引区分コード AS sunrichTorihikiKubunCode
+              , b.有効期限 AS expirationDate
+              , b.ログイン回数 AS loginCount 
+            FROM
+              得意先マスタ a 
+              INNER JOIN 担当者マスタ b 
+                ON a.得意先コード = b.得意先コード 
+              INNER JOIN ( 
+                SELECT
+                  得意先コード
+                  , 得意先名 AS 会社名 
+                FROM
+                  得意先マスタ 
+                WHERE
+                  得意先マスタ.上位ＧＲコード is null
+              ) AS c 
+                ON a.会社コード = c.得意先コード 
+
+            UNION 
+
+            SELECT
+              a.得意先コード AS tokuisakiCode
+              , a.得意先名 AS tokuisakiName
+              , b.担当者番号 AS tantoushaNumber
+              , b.パスワード AS password
+              , b.担当者名 AS staffName
+              , b.公開レベル AS publicLevel
+              , a.会社コード AS kaishaCode
+              , c.会社名 AS kaishaName
+              , a.会社区分コード AS kaishaKubunCode
+              , a.期間条件 AS periodCondition
+              , '1' AS adminFlag
+              , a.ＷＥＢ２０００管理フラグ AS web2000ManagementFlag
+              , b.外部公開フラグ AS externalPublicFlag
+              , a.サンリッチ取引区分コード AS sunrichTorihikiKubunCode
+              , b.有効期限 AS expirationDate
+              , b.ログイン回数 AS loginCount 
+            FROM
+              得意先マスタ a 
+              INNER JOIN 管理者マスタ b 
+              INNER JOIN ( 
+                SELECT
+                  得意先コード
+                  , 得意先名 AS 会社名 
+                FROM
+                  得意先マスタ 
+                WHERE
+                  得意先マスタ.上位ＧＲコード is null
+              ) as c 
+                ON a.会社コード = c.得意先コード
+          ) 全担当者 
+        WHERE
+          UPPER(tokuisakiCode) = #{tokuisakiCode} 
+          AND tantoushaNumber = #{tantoushaNumber}
+    </select>
+
+</mapper>

@@ -1,0 +1,12 @@
+<li th:each="category : ${menuList}" class="nav-item">
+	<a th:href="@{${category.menuConstants.url}}" th:class="'category-' + ${depth} + ' nav-link'" th:classappend="${selectedMenuId == category.menuConstants.id} ? 'active' : ''">
+		<i th:class="'nav-icon fas ' + ${category.menuConstants.iconName}"></i>
+		<p>
+			[[${category.menuConstants.label}]]
+			<i class="right fas fa-angle-left" th:if="${category.menuList != null and category.menuList.size() > 0}"></i>
+		</p>
+	</a>
+	<ul class="nav nav-treeview" th:if="${category.menuList != null and category.menuList.size() > 0}" th:insert="~{element/menu-list(menuList=${category.menuList},selectedMenuId=${selectedMenuId},depth=${depth+1})}">
+	</ul>
+</li>
+

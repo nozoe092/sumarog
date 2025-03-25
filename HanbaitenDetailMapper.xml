@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smalog.mapper.HanbaitenDetailMapper">
+  <select id="findById" resultType="com.smalog.dto.HanbaitenDetailDTO">
+    SELECT
+      ID AS id
+      , 得意先コード AS tokuisakiCode
+      , 商品情報入力ルール AS shouhinjouhouNyuryokuRule
+      , メール受信フラグ AS mailJushinFlag
+      , 担当者名1 AS tantoushaName1
+      , メールアドレス1 AS mailAddress1
+      , 担当者名2 AS tantoushaName2
+      , メールアドレス2 AS mailAddress2
+      , 担当者名3 AS tantoushaName3
+      , メールアドレス3 AS mailAddress3
+      , 担当者名4 AS tantoushaName4
+      , メールアドレス4 AS mailAddress4
+      , 担当者名5 AS tantoushaName5
+      , メールアドレス5 AS mailAddress5
+      , 担当者名6 AS tantoushaName6
+      , メールアドレス6 AS mailAddress6
+      , 担当者名7 AS tantoushaName7
+      , メールアドレス7 AS mailAddress7
+      , 担当者名8 AS tantoushaName8
+      , メールアドレス8 AS mailAddress8
+      , 担当者名9 AS tantoushaName9
+      , メールアドレス9 AS mailAddress9
+      , 担当者名10 AS tantoushaName10
+      , メールアドレス10 AS mailAddress10
+      , 作成担当者番号 AS createTantoushaNumber
+      , 作成日時 AS createDate
+      , 更新担当者番号 AS updateTantoushaNumber
+      , 更新日時 AS updateDate 
+  FROM
+    SL_販売店詳細 
+  WHERE
+    ID = #{id}
+  </select>
+
+  <select id="findByTokuisakiCode" resultType="com.smalog.dto.HanbaitenDetailDTO">
+    SELECT
+      ID AS id
+      , 得意先コード AS tokuisakiCode
+      , 商品情報入力ルール AS shouhinjouhouNyuryokuRule
+      , メール受信フラグ AS mailJushinFlag
+      , 担当者名1 AS tantoushaName1
+      , メールアドレス1 AS mailAddress1
+      , 担当者名2 AS tantoushaName2
+      , メールアドレス2 AS mailAddress2
+      , 担当者名3 AS tantoushaName3
+      , メールアドレス3 AS mailAddress3
+      , 担当者名4 AS tantoushaName4
+      , メールアドレス4 AS mailAddress4
+      , 担当者名5 AS tantoushaName5
+      , メールアドレス5 AS mailAddress5
+      , 担当者名6 AS tantoushaName6
+      , メールアドレス6 AS mailAddress6
+      , 担当者名7 AS tantoushaName7
+      , メールアドレス7 AS mailAddress7
+      , 担当者名8 AS tantoushaName8
+      , メールアドレス8 AS mailAddress8
+      , 担当者名9 AS tantoushaName9
+      , メールアドレス9 AS mailAddress9
+      , 担当者名10 AS tantoushaName10
+      , メールアドレス10 AS mailAddress10
+      , 作成担当者番号 AS createTantoushaNumber
+      , 作成日時 AS createDate
+      , 更新担当者番号 AS updateTantoushaNumber
+      , 更新日時 AS updateDate 
+    FROM
+      SL_販売店詳細 
+    WHERE
+      得意先コード = #{tokuisakiCode}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO SL_販売店詳細 (
+      得意先コード, 商品情報入力ルール, メール受信フラグ,
+      担当者名1, メールアドレス1, 担当者名2, メールアドレス2, 担当者名3, メールアドレス3,
+      担当者名4, メールアドレス4, 担当者名5, メールアドレス5, 担当者名6, メールアドレス6,
+      担当者名7, メールアドレス7, 担当者名8, メールアドレス8, 担当者名9, メールアドレス9,
+      担当者名10, メールアドレス10, 作成担当者番号, 作成日時,
+      更新担当者番号, 更新日時
+    ) VALUES (
+      #{tokuisakiCode}, #{shouhinjouhouNyuryokuRule}, #{mailJushinFlag},
+      #{tantoushaName1}, #{mailAddress1}, #{tantoushaName2}, #{mailAddress2}, #{tantoushaName3}, #{mailAddress3},
+      #{tantoushaName4}, #{mailAddress4}, #{tantoushaName5}, #{mailAddress5}, #{tantoushaName6}, #{mailAddress6},
+      #{tantoushaName7}, #{mailAddress7}, #{tantoushaName8}, #{mailAddress8}, #{tantoushaName9}, #{mailAddress9},
+      #{tantoushaName10}, #{mailAddress10}, #{createTantoushaNumber}, #{createDate},
+      #{updateTantoushaNumber}, #{updateDate}
+    )
+  </insert>
+    
+  <update id="update">
+    UPDATE SL_販売店詳細
+    SET
+      商品情報入力ルール = #{shouhinjouhouNyuryokuRule},
+      メール受信フラグ = #{mailJushinFlag},
+      担当者名1 = #{tantoushaName1},
+      メールアドレス1 = #{mailAddress1},
+      担当者名2 = #{tantoushaName2},
+      メールアドレス2 = #{mailAddress2},
+      担当者名3 = #{tantoushaName3},
+      メールアドレス3 = #{mailAddress3},
+      担当者名4 = #{tantoushaName4},
+      メールアドレス4 = #{mailAddress4},
+      担当者名5 = #{tantoushaName5},
+      メールアドレス5 = #{mailAddress5},
+      担当者名6 = #{mailAddress6},
+      メールアドレス6 = #{mailAddress6},
+      担当者名7 = #{tantoushaName7},
+      メールアドレス7 = #{mailAddress7},
+      担当者名8 = #{tantoushaName8},
+      メールアドレス8 = #{mailAddress8},
+      担当者名9 = #{tantoushaName9},
+      メールアドレス9 = #{mailAddress9},
+      担当者名10 = #{tantoushaName10},
+      メールアドレス10 = #{mailAddress10},
+      更新担当者番号 = #{updateTantoushaNumber},
+      更新日時 = #{updateDate}
+    WHERE
+        id = #{id}
+  </update>
+
+</mapper>

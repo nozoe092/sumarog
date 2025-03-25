@@ -1,0 +1,17 @@
+<div class="col-lg-8 input-test-area" th:data-count="${count}" style="margin-bottom: 6px;" th:id="'inputTestArea_' + ${count}">
+	<div class="form-group">
+		<label th:text="'テスト' + ${count}"></label>
+		<div class="input-group">
+			<select class="form-control">
+				<!-- mapのキーに「data-test」のように「-」がある場合ば配列のようにして書く -->
+				<option th:each="option : ${testList}"
+					th:value="${option.value}"
+					th:text="${option.display}"
+					th:data-test="${option['data-test']}"
+					th:selected="${option.value == testSelectedValue}"></option>
+			</select>
+			<input type="text" class="form-control" name="textInput" th:value="${valueText}">
+			<button type="button" class="btn btn-danger btn-test-delete" th:if="${count != '1'}" th:data-count="${count}">削除</button>
+		</div>
+	</div>
+</div>
