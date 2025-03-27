@@ -93,14 +93,18 @@ public class MakerListController extends BaseController {
 			return ResponseEntity.status(VALIDATION_INVALID_HTTP_STATUS).body(parseBindingResult(bindingResult));
 		}
 
- // `findMaker` で取得したメーカー情報をリストに変換（得意先コード & 得意先名のみ）
- TokuisakiDTO maker = tokuisakiService.findMaker(listForm.getTokuisakiCode());
- if (maker != null) {
-	 Map<String, String> data = new HashMap<>();
-	 data.put("tokuisakiCode", maker.getTokuisakiCode());  // 得意先コード
-	 data.put("tokuisakiName", maker.getTokuisakiName());  // 得意先名
-	 dataList.add(data);
- }
+		 // データを取得してグリッド用に加工する
+		 tokuisakiService.getHanbaitenList(
+            listForm.getTokuisakiCode(),
+            listForm.getTokuisakiName()
+        ).forEach(dto -> {
+            Map<String, String> data = new HashMap<>();
+            data.put("tokuisakiCode", dto.getTokuisakiCode());
+            data.put("tokuisakiName", dto.getTokuisakiName());
+            dataList.add(data);
+        });
+
+
 		result.put("dataList", dataList);
 		return ResponseEntity.ok(result);
 	}

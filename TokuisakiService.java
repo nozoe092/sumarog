@@ -37,6 +37,14 @@ public class TokuisakiService {
     }
 
     /**
+     * 
+     * @param tokuisakiCode
+     * @return
+     */
+    public List<TokuisakiDTO> getHanbaitenList(String tokuisakiCode, String tokuisakiName) {
+        return getHanbaitenList(tokuisakiCode, tokuisakiName, null);
+    }
+    /**
      * メーカーの情報を取得する
      * @param kaishaKubunCode
      * @param tokuisakiCode
