@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,8 +16,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.smalog.constant.MenuConstants;
 import com.smalog.form.hanbaiten.ListForm;
-import com.smalog.service.MessageService;
 import com.smalog.service.TokuisakiService;
+import com.smalog.util.ApplicationUtils;
+import com.smalog.util.MessageUtils;
 
 import jakarta.validation.Valid;
 
@@ -26,14 +26,19 @@ import jakarta.validation.Valid;
 @Controller
 public class HanbaitenListController extends BaseController {
 
-	@Autowired
-    private MessageService messageService;
-
 	private static final String PAGE_NAME = "販売店一覧";
 	private static final MenuConstants SELECTED_MENU = MenuConstants.MASTER_HANBAITEN_LIST;
 
-	@Autowired
-    private TokuisakiService tokuisakiService;
+	/* Autowired */
+    private final TokuisakiService tokuisakiService;
+	private final MessageUtils messageUtils;
+
+	public HanbaitenListController(
+		TokuisakiService tokuisakiService, 
+		MessageUtils messageUtils) {
+			this.tokuisakiService = tokuisakiService;
+			this.messageUtils = messageUtils;
+    }
     
 	@GetMapping({"/hanbaiten/list"})
 	public String list(@ModelAttribute ListForm listForm, Model model) throws Exception {
@@ -61,7 +66,7 @@ public class HanbaitenListController extends BaseController {
 
 		if(!isLoginUserSunrich()) {
 			// 権限が無い場合
-			return ResponseEntity.status(PERMISSION_ERROR_STAUS).body(messageService.getMessage(MESSAGE_PROPERTY_NAME_ERROR_PERMISSION));
+			return ResponseEntity.status(PERMISSION_ERROR_HTTP_STAUS).body(messageUtils.getMessage(MESSAGE_PROPERTY_NAME_ERROR_PERMISSION));
 		}
 
 		List<Map<String, String>> dataList = new ArrayList<>();
@@ -73,6 +78,7 @@ public class HanbaitenListController extends BaseController {
 		// データを取得してグリッド用に加工する
 		tokuisakiService.getHanbaitenList(listForm.getTokuisakiCode(), listForm.getTokuisakiName(), listForm.getTokuisakiNameKana()).forEach(dto -> {
 			Map<String, String> data = new HashMap<>();
+			data.put("encryptTokuisakiCode", ApplicationUtils.paramEncrypt(dto.getTokuisakiCode()));
 			data.put("tokuisakiCode", dto.getTokuisakiCode());
 			data.put("tokuisakiName", dto.getTokuisakiName());
 			data.put("tokuisakiNameKana", dto.getTokuisakiNameKana());

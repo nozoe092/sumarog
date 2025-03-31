@@ -18,11 +18,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.smalog.constant.MenuConstants;
 import com.smalog.dto.TokuisakiDTO;
+import com.smalog.util.MessageUtils;
+
 
 import com.smalog.form.maker.ListForm;
 import com.smalog.service.TokuisakiService;
 import com.smalog.service.HanbaitenDetailService;
-import com.smalog.service.MessageService;
 import com.smalog.util.ApplicationUtils;
 
 import jakarta.validation.Valid;
@@ -37,21 +38,23 @@ public class MakerListController extends BaseController {
     private TokuisakiService tokuisakiService;
 
 
+
+
 	@Autowired
 	private HanbaitenDetailService hanbaitenDetailService;
 
-	@Autowired
-    private MessageService messageService;
     
 	@GetMapping({"/maker/list"})
-	public String list(@ModelAttribute ListForm listForm, Model model) throws Exception {
+	public String list(@ModelAttribute ListForm listForm,
+						@ModelAttribute("loginTokuisakiCode") String loginTokuisakiCode, 
+	 					Model model) throws Exception {
 		if(!isLoginUserSunrich()) {
 			// 権限が無い場合
 			return getPermissionErrorView(model);
 		}
 		model.addAttribute(PAGE_NAME_KEY, PAGE_NAME);	// 画面名
 		model.addAttribute(SELECTED_MENU_ID_KEY, SELECTED_MENU.getId());	// メニューの選択状態
-		model.addAttribute("listForm", listForm);
+		model.addAttribute("listForm", listForm);		 
 		return "maker/list";
 	}
 
@@ -84,7 +87,7 @@ public class MakerListController extends BaseController {
 
 		if(!isLoginUserSunrich()) {
 			// 権限が無い場合
-			return ResponseEntity.status(PERMISSION_ERROR_STAUS).body(messageService.getMessage(MESSAGE_PROPERTY_NAME_ERROR_PERMISSION));
+			return ResponseEntity.status(PERMISSION_ERROR_HTTP_STAUS).body(messageUtils.getMessage(MESSAGE_PROPERTY_NAME_ERROR_PERMISSION));
 		}
 
 		List<Map<String, String>> dataList = new ArrayList<>();
