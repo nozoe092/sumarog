@@ -14,6 +14,7 @@
       得意先マスタ 
     <where>
       会社区分コード = #{kaishaKubunCode}
+      AND ＳＬ_利用フラグ = #{slUseFlag}
       <if test="tokuisakiCode != null and tokuisakiCode != ''">
         AND 得意先コード = #{tokuisakiCode}
       </if>
@@ -22,6 +23,22 @@
       </if>
       <if test="tokuisakiNameKana != null and tokuisakiNameKana != ''">
         AND 得意先カナ名 LIKE CONCAT('%', #{tokuisakiNameKana}, '%')
+      </if>
+    </where>
+  </select>
+
+  <select id="getSelectBoxDataList" resultType="com.smalog.dto.TokuisakiDTO">
+    SELECT
+      得意先マスタ.得意先コード AS tokuisakiCode
+      , 得意先マスタ.得意先名 AS tokuisakiName
+      , 会社区分コード AS kaishaKubunCode
+    FROM
+      得意先マスタ 
+    <where>
+      会社区分コード = #{kaishaKubunCode}
+      AND ＳＬ_利用フラグ = #{slUseFlag}
+      <if test="tokuisakiCode != null and tokuisakiCode != ''">
+        AND 得意先コード = #{tokuisakiCode}
       </if>
     </where>
   </select>
@@ -36,7 +53,26 @@
     <where>
       会社区分コード = #{kaishaKubunCode}
       AND 得意先コード = #{tokuisakiCode}
+      AND ＳＬ_利用フラグ = #{slUseFlag}
     </where>
+  </select>
+
+
+<!-- 新しいクエリの追加 -->
+  <select id="getHanbaitenOptions" resultType="com.smalog.dto.TokuisakiDTO">
+    SELECT
+      得意先コード AS tokuisakiCode,
+      得意先名 AS tokuisakiName
+    FROM
+      得意先マスタ
+    WHERE
+      会社区分コード = 1
+      AND SL_利用フラグ = 1
+    <if test="loginTokuisakiCode != null">
+      AND 得意先コード = #{loginTokuisakiCode}
+    </if>
+    ORDER BY
+      得意先コード ASC
   </select>
 
 </mapper>

@@ -14,7 +14,7 @@
 										<div class="form-group">
 											<label for="hanbaiten">販売店</label>
 											<select class="form-control" th:field="*{hanbaiten}" required>
-												<option value="">選択してください</option>
+												<option value=""></option>
 												<option th:each="item : ${hanbaitenList}" th:value="${item.tokuisakiCode}" th:text="${item.tokuisakiName}"></option>
 											</select>
 											<div class="invalid-feedback" id="errorMessage.hanbaiten"></div>
@@ -23,18 +23,18 @@
 									<div class="col-lg-3">
 										<div class="form-group">
 											<label for="makerCode">メーカーコード</label>
-											<input type="text" class="form-control" th:field="*{makerCode}">
-											<div class="invalid-feedback" id="errorMessage.makerCode"></div>
+											<input type="text" class="form-control" th:field="*{tokuisakiCode}">
+											<div class="invalid-feedback" id="errorMessage.tokuisakiCode"></div>
 										</div>
 									</div>
 									<div class="col-lg-3">
 										<div class="form-group">
 											<label for="name">名称</label>
-											<input type="text" class="form-control" th:field="*{name}">
-											<div class="invalid-feedback" id="errorMessage.name"></div>
+											<input type="text" class="form-control" th:field="*{tokuisakiName}">
+											<div class="invalid-feedback" id="errorMessage.tokuisakiName"></div>
 										</div>
 									</div>
-									<div class="col-lg-3">
+									<!-- <div class="col-lg-3">
 										<div class="form-group">
 											<label for="category">カテゴリー</label>
 											<select class="form-control" th:field="*{category}">
@@ -43,7 +43,7 @@
 											</select>
 											<div class="invalid-feedback" id="errorMessage.category"></div>
 										</div>
-									</div>
+									</div> -->
 								</div>
 
 								<!-- 入れ子になっている場合のエラー表示例 -->

@@ -1,35 +1,41 @@
 package com.smalog.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.smalog.constant.ApplicationConstants;
 import com.smalog.dto.HanbaitenDetailDTO;
+import com.smalog.dto.HanbaitenTantoushaDTO;
 import com.smalog.form.element.TantoushaForm;
 import com.smalog.form.hanbaiten.DetailForm;
 import com.smalog.mapper.HanbaitenDetailMapper;
-import com.smalog.util.ApplicationUtils;
+import com.smalog.util.MessageUtils;
+
 
 
 @Service
-public class HanbaitenDetailService implements ApplicationConstants {
+public class HanbaitenDetailService extends BaseService {
 	
 	@Autowired
 	private HanbaitenDetailMapper hanbaitenDetailMapper;
 
     @Autowired
-    private MessageService messageService;
+    private MessageUtils messageUtils;
+
+    @Autowired
+    private HanbaitenTantoushaService hanbaitenTantoushaService;
 
     /**
      * 販売店の情報を取得する
      * @param id
      * @return
      */
-    public HanbaitenDetailDTO findById(int id) {
+    public HanbaitenDetailDTO findById(Integer id) {
         return hanbaitenDetailMapper.findById(id);
     }
 
@@ -48,7 +54,7 @@ public class HanbaitenDetailService implements ApplicationConstants {
      * @param hanbaitenDetailDTO
      * @return
      */
-    public int insert(HanbaitenDetailDTO hanbaitenDetailDTO) {
+    public Integer insert(HanbaitenDetailDTO hanbaitenDetailDTO) {
         LocalDateTime now = LocalDateTime.now();
         if(hanbaitenDetailDTO.getCreateDate() == null) {
             hanbaitenDetailDTO.setCreateDate(now);
@@ -71,6 +77,8 @@ public class HanbaitenDetailService implements ApplicationConstants {
         if(hanbaitenDetailDTO.getUpdateDate() == null) {
             hanbaitenDetailDTO.setUpdateDate(LocalDateTime.now());
         }
+        // 更新ログを出力する
+        insertUpdateLog(hanbaitenDetailDTO);
         return hanbaitenDetailMapper.update(hanbaitenDetailDTO);
     }
     
@@ -85,36 +93,78 @@ public class HanbaitenDetailService implements ApplicationConstants {
     public boolean saveTransaction(DetailForm detailForm, String tantoushaNumber) {
         boolean result = false; 
 
-        int hanbaitenDetailId = detailForm.getId();
+        Integer hanbaitenDetailId = detailForm.getId();
 		HanbaitenDetailDTO hanbaitenDetailDTO = null;
-		boolean isNew = hanbaitenDetailId == 0;
+		boolean isNew = hanbaitenDetailId == null;
 		if(isNew) {
 			// 新規登録
 			hanbaitenDetailDTO = new HanbaitenDetailDTO();
 			// 値を設定する
 			setHanibaitenDetailFormToDto(detailForm, hanbaitenDetailDTO, tantoushaNumber);
 
-			int insertId = insert(hanbaitenDetailDTO);
-			if(insertId == 0) {
+			this.insert(hanbaitenDetailDTO);
+			if(hanbaitenDetailDTO.getId() == 0) {
 				// 登録失敗
-                throw new RuntimeException(messageService.getMessage(MESSAGE_PROPERTY_NAME_ERROR_SAVE_FAILED));
+                throw new RuntimeException(messageUtils.getMessage(MESSAGE_PROPERTY_NAME_ERROR_SAVE_FAILED));
 			}
 		} else {
 			// 更新
 			hanbaitenDetailDTO = findById(hanbaitenDetailId);
-			if(hanbaitenDetailDTO != null && detailForm.getUpdateDate().equals(hanbaitenDetailDTO.getUpdateDate())){
+            // 排他チェック
+			if(hanbaitenDetailDTO != null && detailForm.getUpdateDate().isEqual(hanbaitenDetailDTO.getUpdateDate())){
 				// 値を設定する
 				setHanibaitenDetailFormToDto(detailForm, hanbaitenDetailDTO, tantoushaNumber);
-				int updateCount = update(hanbaitenDetailDTO);
-				if(updateCount == 0) {
+				int updateCount = this.update(hanbaitenDetailDTO);
+				if(updateCount != 1) {
 					// 更新失敗
-                    throw new RuntimeException(messageService.getMessage(MESSAGE_PROPERTY_NAME_ERROR_UPDATE_FAILED));
+                    throw new RuntimeException(messageUtils.getMessage(MESSAGE_PROPERTY_NAME_ERROR_UPDATE_FAILED));
 				}
 			}else{
 				// 排他エラー
-				throw new RuntimeException(messageService.getMessage(MESSAGE_PROPERTY_NAME_ERROR_OPTIMISTICLOCK));
+				throw new RuntimeException(messageUtils.getMessage(MESSAGE_PROPERTY_NAME_ERROR_OPTIMISTICLOCK));
 			}
 		}
+
+
+        // 担当者情報の保存
+        Map<Integer, TantoushaForm> tantoushaFormList = detailForm.getTantoushaFormList();
+        List<TantoushaForm> hanbaitenTantoushaFormInsertList = new ArrayList<>();
+        List<TantoushaForm> hanbaitenTantoushaFormUpdateList = new ArrayList<>();
+        List<Integer> hanbaitenTantoushaIdList = new ArrayList<>();
+		for (Integer key : tantoushaFormList.keySet()) {
+			TantoushaForm tantoushaForm = tantoushaFormList.get(key);
+            Integer hanbaitenTantoushaId = tantoushaForm.getId();
+            if(hanbaitenTantoushaId != null) {
+                // 更新
+                hanbaitenTantoushaFormUpdateList.add(tantoushaForm);
+                hanbaitenTantoushaIdList.add(hanbaitenTantoushaId);
+            }else{
+                hanbaitenTantoushaFormInsertList.add(tantoushaForm);
+            }
+		}
+
+        // 削除
+        List<HanbaitenTantoushaDTO> hanbaitenTantoushaDTODeleteList = hanbaitenTantoushaService.getNotIdList(hanbaitenDetailDTO.getId(), hanbaitenTantoushaIdList);
+        if(hanbaitenTantoushaDTODeleteList.size() > 0) {
+            hanbaitenTantoushaService.deleteList(hanbaitenTantoushaDTODeleteList);
+        }
+
+        // 更新
+        List<HanbaitenTantoushaDTO> hanbaitenTantoushaDTOUpdateList = hanbaitenTantoushaService.createUpdateDtoList(hanbaitenTantoushaFormUpdateList, hanbaitenTantoushaIdList, tantoushaNumber);
+        int count = 0;
+        for(HanbaitenTantoushaDTO hanbaitenTantoushaDTO : hanbaitenTantoushaDTOUpdateList) {
+            count += hanbaitenTantoushaService.update(hanbaitenTantoushaDTO);
+        }
+        if(hanbaitenTantoushaFormUpdateList.size() != count){
+            // 更新件数が違うため排他エラー
+            throw new RuntimeException(messageUtils.getMessage(MESSAGE_PROPERTY_NAME_ERROR_OPTIMISTICLOCK));
+        }
+        // 登録
+        List<HanbaitenTantoushaDTO> hanbaitenTantoushaDTOInsertList = hanbaitenTantoushaService.createInsertDtoList(hanbaitenTantoushaFormInsertList, hanbaitenDetailDTO.getId(), hanbaitenDetailDTO.getTokuisakiCode(), tantoushaNumber);
+        if(hanbaitenTantoushaDTOInsertList.size() > 0) {
+            hanbaitenTantoushaService.insertList(hanbaitenTantoushaDTOInsertList);
+        }
+
         result = true;
         return result;
     }
@@ -129,16 +179,17 @@ public class HanbaitenDetailService implements ApplicationConstants {
         detailForm.setShouhinjouhouNyuryokuRule(hanbaitenDetailDTO.getShouhinjouhouNyuryokuRule());
         detailForm.setMailJushinFlag(hanbaitenDetailDTO.getMailJushinFlag());
         detailForm.setUpdateDate(hanbaitenDetailDTO.getUpdateDate());
+
+        List<HanbaitenTantoushaDTO> hanbaitenTantoushaDTOList = hanbaitenTantoushaService.fidByHanbaitenDetailId(hanbaitenDetailDTO.getId());
         
-        for(int index = DetailForm.START_TANTOUSHA_LIST_INDEX; index <= DetailForm.MAX_TANTOUSHA_LIST_INDEX; index++) {
-            String tantoushaName = ApplicationUtils.callVoidGetterInvoke(hanbaitenDetailDTO, "getTantoushaName" + index, String.class);
-            String mailAddress = ApplicationUtils.callVoidGetterInvoke(hanbaitenDetailDTO, "getMailAddress" + index, String.class);
-            if(tantoushaName != null && mailAddress != null) {
-                TantoushaForm tantoushaForm = new TantoushaForm();
-                tantoushaForm.setName(tantoushaName);
-                tantoushaForm.setMailAddress(mailAddress);
-                detailForm.getTantoushaFormList().put(index, tantoushaForm);
-            }
+        for(int index = 0; index < hanbaitenTantoushaDTOList.size(); index++) {
+            HanbaitenTantoushaDTO hanbaitenTantoushaDTO = hanbaitenTantoushaDTOList.get(index);
+            TantoushaForm tantoushaForm = new TantoushaForm();
+            tantoushaForm.setId(hanbaitenTantoushaDTO.getId());
+            tantoushaForm.setName(hanbaitenTantoushaDTO.getTantoushaName());
+            tantoushaForm.setMailAddress(hanbaitenTantoushaDTO.getMailAddress());
+            tantoushaForm.setBeforeMailAddress(hanbaitenTantoushaDTO.getMailAddress());
+            detailForm.getTantoushaFormList().put(index + DetailForm.START_TANTOUSHA_LIST_INDEX, tantoushaForm);
         }
 	}
 
@@ -150,7 +201,7 @@ public class HanbaitenDetailService implements ApplicationConstants {
      */
 	private void setHanibaitenDetailFormToDto(DetailForm detailForm, HanbaitenDetailDTO hanbaitenDetailDTO, String tantoushaNumber){
 		hanbaitenDetailDTO.setTokuisakiCode(detailForm.getTokuisakiCode());
-		hanbaitenDetailDTO.setShouhinjouhouNyuryokuRule(0); // TODO: 仕様に合わせて値を設定する
+		hanbaitenDetailDTO.setShouhinjouhouNyuryokuRule(detailForm.getShouhinjouhouNyuryokuRule());
         hanbaitenDetailDTO.setMailJushinFlag(detailForm.getMailJushinFlag());
 
 		hanbaitenDetailDTO.setCreateTantoushaNumber(tantoushaNumber);
@@ -158,19 +209,5 @@ public class HanbaitenDetailService implements ApplicationConstants {
 		hanbaitenDetailDTO.setUpdateTantoushaNumber(tantoushaNumber);
         hanbaitenDetailDTO.setUpdateDate(null);
 
-        // 初期化する
-        for(int index = DetailForm.START_TANTOUSHA_LIST_INDEX; index <= DetailForm.MAX_TANTOUSHA_LIST_INDEX; index++) {
-            ApplicationUtils.callVoidSetterInvoke(hanbaitenDetailDTO, "setTantoushaName" + index, null);
-            ApplicationUtils.callVoidSetterInvoke(hanbaitenDetailDTO, "setMailAddress" + index, null);
-        }
-   
-		Map<Integer, TantoushaForm> tantoushaFormList = detailForm.getTantoushaFormList();
-		int index = DetailForm.START_TANTOUSHA_LIST_INDEX;
-		for (Integer key : tantoushaFormList.keySet()) {
-			TantoushaForm tantoushaForm = tantoushaFormList.get(key);
-			ApplicationUtils.callVoidSetterInvoke(hanbaitenDetailDTO, "setTantoushaName" + (index), tantoushaForm.getName());
-			ApplicationUtils.callVoidSetterInvoke(hanbaitenDetailDTO, "setMailAddress" + (index), tantoushaForm.getMailAddress());
-			index++;
-		}
 	}
 }

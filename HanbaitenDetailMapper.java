@@ -8,7 +8,7 @@ import com.smalog.dto.HanbaitenDetailDTO;
 @Mapper
 public interface HanbaitenDetailMapper {
         HanbaitenDetailDTO findById(
-                @Param("id") int id
+                @Param("id") Integer id
         );
 
         HanbaitenDetailDTO findByTokuisakiCode(

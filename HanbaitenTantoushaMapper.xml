@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.smalog.mapper.HanbaitenTantoushaMapper">
+  <sql id="allColumns">
+    ID AS id
+    , 得意先コード AS tokuisakiCode
+    , 販売店詳細ID AS hanbaitenDetailId
+    , 担当者名 AS tantoushaName
+    , メールアドレス AS mailAddress
+    , 作成担当者番号 AS createTantoushaNumber
+    , 作成日時 AS createDate
+    , 更新担当者番号 AS updateTantoushaNumber
+    , 更新日時 AS updateDate 
+  </sql>
+
+  <select id="findById" resultType="com.smalog.dto.HanbaitenTantoushaDTO">
+    SELECT
+      <include refid="allColumns" />
+    FROM
+      SL_販売店担当者 
+    WHERE
+      ID = #{id}
+  </select>
+
+  <select id="findByIdList" resultType="com.smalog.dto.HanbaitenTantoushaDTO">
+    SELECT
+      <include refid="allColumns" />
+    FROM
+      SL_販売店担当者 
+    <where>
+      <include refid="com.smalog.mapper.CommonSQLMapper.findByIdListCondition" />
+    </where>
+  </select>
+
+  <select id="findByHanbaitenDetailId" resultType="com.smalog.dto.HanbaitenTantoushaDTO">
+    SELECT
+      <include refid="allColumns" />
+    FROM
+      SL_販売店担当者 
+    WHERE
+      販売店詳細ID = #{hanbaitenDetailId}
+  </select>
+
+  <select id="getNotIdList" resultType="com.smalog.dto.HanbaitenTantoushaDTO">
+    SELECT
+      ID AS id,
+      得意先コード AS tokuisakiCode,
+      販売店詳細ID AS hanbaitenDetailId,
+      更新日時 AS updateDate
+    FROM
+      SL_販売店担当者 
+    <where>
+      販売店詳細ID = #{hanbaitenDetailId}
+      <include refid="com.smalog.mapper.CommonSQLMapper.findByNotIdListCondition" />
+    </where>
+  </select>
+
+  <insert id="insertList" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO SL_販売店担当者 (
+      得意先コード, 販売店詳細ID, 担当者名, メールアドレス, 
+      作成担当者番号, 作成日時, 更新担当者番号, 更新日時
+    ) VALUES
+    <foreach collection="list" item="item" separator=",">
+      (
+        #{item.tokuisakiCode}, #{item.hanbaitenDetailId}, #{item.tantoushaName}, #{item.mailAddress},
+        #{item.createTantoushaNumber}, #{item.createDate}, #{item.updateTantoushaNumber}, #{item.updateDate}
+      )
+    </foreach>
+  </insert>
+    
+  <update id="update">
+    UPDATE SL_販売店担当者 SET
+      担当者名 = #{tantoushaName},
+      メールアドレス = #{mailAddress},
+      更新担当者番号 = #{updateTantoushaNumber},
+      更新日時 = #{updateDate}
+    WHERE
+      ID = #{id}
+  </update>
+
+  <delete id="deleteList">
+    DELETE FROM SL_販売店担当者
+    WHERE
+      <choose>
+        <!-- 1件の場合 -->
+        <when test="list.size() == 1">
+          ID = #{list[0].id}
+        </when>
+        <!-- 2件以上の場合 -->
+        <otherwise>
+          ID IN
+          <foreach collection="list" item="item" open="(" close=")" separator=",">
+              #{item.id}
+          </foreach>
+        </otherwise>
+      </choose>
+  </delete>
+
+</mapper>

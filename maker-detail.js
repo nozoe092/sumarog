@@ -21,7 +21,7 @@ $(document).on('click', '#btnAddTantoushaForm', function () {
 		// 追加する
 		var element = $('#addTantoushaFormArea');
 		sendAjaxRequest({
-			url: '/hanbaiten/detail/get-tantousha-form',
+			url: '/maker/detail/get-tantousha-form',
 			method: 'POST',
 			data:JSON.stringify({ maxIndex: maxIndex }),
 			onSuccess: function (response, responseData) {
@@ -61,7 +61,7 @@ function sendAuthCode(){
 	var id = $(this).data('id'); 
 	var mailAddress = $(`[id='tantoushaFormList${id}.mailAddress']`).val();
     sendAjaxRequest({
-		url: '/hanbaiten/detail/send-auth-code',
+		url: '/maker/detail/send-auth-code',
 		method: 'POST',
 		data:JSON.stringify({ mailAddress: mailAddress }),
 		onSuccess: function (response, responseData) {
@@ -89,9 +89,9 @@ $(document).on('click', '#btnSave', function () {
 function save(){
 	// 入力エラーメッセージをクリア
 	clearValidationErrorMessage();
-	const formData = new FormData($('#hanbaitenDetailForm')[0]);
+	const formData = new FormData($('#makerDetailForm')[0]);
 	sendAjaxRequest({
-		url: '/hanbaiten/detail/save',
+		url: '/maker/detail/save',
 		data:formData,
 		onSuccess: function (response, responseData) {
 			if(responseData != null && responseData.status == HTTP_STATUS.OK){

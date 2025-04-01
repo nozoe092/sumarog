@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,18 +12,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.smalog.constant.MenuConstants;
-import com.smalog.dto.TokuisakiDTO;
 import com.smalog.util.MessageUtils;
 
 
 import com.smalog.form.maker.ListForm;
 import com.smalog.service.TokuisakiService;
-import com.smalog.service.HanbaitenDetailService;
-import com.smalog.util.ApplicationUtils;
 
 import jakarta.validation.Valid;
 
@@ -34,15 +29,14 @@ public class MakerListController extends BaseController {
 	private static final String PAGE_NAME = "メーカ一覧";
 	private static final MenuConstants SELECTED_MENU = MenuConstants.MASTER_MAKER_LIST;
 
-	@Autowired
-    private TokuisakiService tokuisakiService;
+	/* Autowired */
+	private final TokuisakiService tokuisakiService;
+    private final MessageUtils messageUtils;
 
-
-
-
-	@Autowired
-	private HanbaitenDetailService hanbaitenDetailService;
-
+	public MakerListController(TokuisakiService tokuisakiService, MessageUtils messageUtils) {
+		this.tokuisakiService = tokuisakiService;
+		this.messageUtils = messageUtils;
+	}
     
 	@GetMapping({"/maker/list"})
 	public String list(@ModelAttribute ListForm listForm,

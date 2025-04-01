@@ -1,4 +1,4 @@
-package com.smalog.form.hanbaiten;
+package com.smalog.form.maker;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

@@ -16,6 +16,8 @@ $(document).on('click', '#btnSearch', function () {
 		onSuccess: function (response, responseData) {
 			if(responseData.status == HTTP_STATUS.OK){
 				setJsGridData('#hanbaitenListJsGrid', responseData.dataList);
+				// 得意先コードの昇順にしておく
+				$("#hanbaitenListJsGrid").jsGrid('sort', 'tokuisakiCode', 'asc');
 			}else{
 				setGlobalErrorMessage(responseData);
 			}
@@ -67,6 +69,7 @@ function initializeHanbaitenListJsGrid() {
                     return $("<div>").addClass("text-center grid-button-area").append($recruitmentNoticeLink).append($proofreadingLink);
                 },
 				width: 140,
+				sorting: false,
             },
 			{ 
                 title: "詳細設定", 
@@ -76,12 +79,13 @@ function initializeHanbaitenListJsGrid() {
                         .text("編集")
                         .addClass("btn btn-gird btn-success btn-xs")
                         .on("click", function() {
-							window.open('/hanbaiten/detail?tokuisakiCode=' + row.tokuisakiCode, '_blank');
+							window.open('/hanbaiten/detail?tokuisakiCode=' + row.encryptTokuisakiCode, '_blank');
                         });
 
                     return $("<div>").addClass("text-center grid-button-area").append($editLink);
                 },
 				width: 80,
+				sorting: false,
             },
 		]
 	});

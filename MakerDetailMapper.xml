@@ -4,7 +4,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.smalog.mapper.HanbaitenDetailMapper">
+<mapper namespace="com.smalog.mapper.MakerDetailMapper">
 
   <sql id="allColumns">
     ID AS id
@@ -17,7 +17,7 @@
     , 更新日時 AS updateDate 
   </sql>
 
-  <select id="findById" resultType="com.smalog.dto.HanbaitenDetailDTO">
+  <select id="findById" resultType="com.smalog.dto.MakerDetailDTO">
     SELECT
       <include refid="allColumns" />
     FROM
@@ -26,7 +26,7 @@
       ID = #{id}
   </select>
 
-  <select id="findByTokuisakiCode" resultType="com.smalog.dto.HanbaitenDetailDTO">
+  <select id="findByTokuisakiCode" resultType="com.smalog.dto.MakerDetailDTO">
     SELECT
       <include refid="allColumns" />
     FROM

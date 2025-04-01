@@ -8,6 +8,7 @@
 				<input type="hidden" th:field="*{tokuisakiCode}" />
 				<input type="hidden" th:field="*{id}" />
 				<input type="hidden" th:field="*{updateDate}" />
+				<input type="hidden" th:field="*{maxTantoushaListIndex}" />
 				<div class="row">
 					<div class="col-lg-12">
 						<p class="edit-target-info"><i class="fas fa-check-circle">&nbsp[[${lblTargetHanbaitenInfo}]]</i></p>
@@ -17,6 +18,21 @@
 					<div class="col-lg-12">
 						<div class="card">
 							<div class="card-body">
+								<div class="row">
+									<div class="col-lg-6">
+										<div class="form-group">
+											<label for="shouhinjouhouNyuryokuRule">商品情報入力ルール</label>
+											<select class="form-control" th:field="*{shouhinjouhouNyuryokuRule}">
+												<!-- mapのキーに「data-test」のように「-」がある場合ば配列のようにして書く -->
+												<option th:each="option : *{shouhinjouhouNyuryokuRuleOptions}"
+													th:value="${option.value}"
+													th:text="${option.text}"
+													th:data-id="${option['data-id']}"></option>
+											</select>
+											<div class="invalid-feedback" th:id="errorMessage.shouhinjouhouNyuryokuRule"></div>
+										</div>
+									</div>
+								</div>
 								<div class="row">
 									<div class="col-lg-12">
 										<div class="form-group">
@@ -36,7 +52,7 @@
 										<div th:replace="~{element/tantousha-form(tantoushaForm=${tantoushaForm},id=${stat.index})}"></div>
 									</th:block> -->
 									<th:block th:each="entry : *{tantoushaFormList}">
-										<div th:replace="~{element/tantousha-form(tantoushaForm=${entry.value}, id=${entry.key})}"></div>
+										<div th:replace="~{element/tantousha-form(tantoushaForm=${entry.value}, index=${entry.key})}"></div>
 									</th:block>
 								</div>
 								<div class="row">
@@ -46,7 +62,7 @@
 								</div>
 								<div class="row">
 									<div class="col-lg-12 text-center">
-										<button type="button" id="btnClose" class="btn btn-outline-secondary">閉じる</button>
+										<button type="button" id="btnClose" class="btn btn-outline-secondary" th:if="${isLoginUserSunrich}">閉じる</button>
 										<button type="button" id="btnSave" class="btn btn-outline-primary">保存</button>
 									</div>
 								</div>
