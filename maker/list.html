@@ -12,12 +12,13 @@
 								<div class="row">
 									<div class="col-lg-3">
 										<div class="form-group">
-											<label for="hanbaiten">販売店</label>
-											<select class="form-control" th:field="*{hanbaiten}" required>
-												<option value=""></option>
-												<option th:each="item : ${hanbaitenList}" th:value="${item.tokuisakiCode}" th:text="${item.tokuisakiName}"></option>
+											<label>販売店</label>
+											<select class="form-control" id="hanbaitenSelectBox">
+												<option th:each="option : ${hanbaitenSelectBoxOptions}"
+													th:value="${option.value}"
+													th:text="${option.text}"
+													th:data-id="${option['data-id']}"></option>
 											</select>
-											<div class="invalid-feedback" id="errorMessage.hanbaiten"></div>
 										</div>
 									</div>
 									<div class="col-lg-3">

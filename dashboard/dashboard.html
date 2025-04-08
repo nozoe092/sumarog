@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<!-- <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{common/layout.html}" th:with="jsFiles=${ {'/js/test.js','/js/test2.js'} }"> -->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{common/layout.html}" th:with="jsFiles=${ {'/js/dashboard.js','/plugins/web-socket/sockjs.min.js','/plugins/web-socket/stomp.min.js'} }">
+
+	<div class="content" layout:fragment="content">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-lg-6">
+					<h1 class="m-0" th:text="${message}"></h1>
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">コンテンツ1</h5>
+		
+							<p class="card-text">
+								コンテンツの内容1
+							</p>
+		
+							<a href="#" class="card-link">リンク1</a>
+							<a href="#" class="card-link">リンク2</a>
+						</div>
+					</div>
+		
+					<div class="card card-primary card-outline">
+						<div class="card-header">
+						  <h3 class="card-title">ブロードキャストで送信したメッセージを表示</h3>
+						</div>
+						<!-- /.card-header -->
+						<div class="card-body p-0">
+							<table class="table table-sm table-striped">
+								<tbody id="chatMessageOutputArea">
+								</tbody>
+							</table>
+						</div>
+						<!-- /.card-body -->
+					</div>
+				</div>
+				<!-- /.col-md-6 -->
+			</div>
+
+			<div class="row" style="margin-bottom: 10px;">
+				<div class="col-lg-6">
+					<input type="text" class="form-control" name="chatMessage" id="chatMessage" placeholder="メッセージ">
+				</div>
+				<div class="col-lg-6">
+					<input type="button" class="btn btn-primary" id="btnSendChatMessage" value="メッセージ送信">
+				</div>
+			</div>
+
+			<!-- /.row -->
+			<!-- HTMLパーツの呼び出し -->
+			<div class="row" id="addTestArea" th:insert="~{element/test(valueText='値',testSelectedValue='2',testList=${testList},count='1')}">
+			</div>
+			<div class="row">
+				<div class="col-lg-6">
+					<button class="btn btn-primary" id="btnTest">追加</button>
+				</div>
+			</div>
+
+
+			<div class="row" style="margin-top: 10px;">
+				<div class="col-lg-3">
+					<div class="form-group">
+						<label>販売店</label>
+						<select class="form-control" id="hanbaitenSelectBox">
+							<option th:each="option : ${hanbaitenSelectBoxOptions}"
+								th:value="${option.value}"
+								th:text="${option.text}"
+								th:data-id="${option['data-id']}"></option>
+						</select>
+					</div>
+				</div>
+
+				<div class="col-lg-3">
+					<div class="form-group">
+						<label>企画</label>
+						<select class="form-control" id="projectSelectBox">
+							<option th:each="option : ${projectSelectBoxOptions}"
+								th:value="${option.value}"
+								th:text="${option.text}"
+								th:data-id="${option['data-id']}"></option>
+						</select>
+					</div>
+				</div>
+
+				<div class="col-lg-3">
+					<div class="form-group">
+						<label>メーカー</label>
+						<select class="form-control" id="projectMakerSelectBox">
+							<option th:each="option : ${projectMakerSelectBoxOptions}"
+								th:value="${option.value}"
+								th:text="${option.text}"
+								th:data-id="${option['data-id']}"></option>
+						</select>
+					</div>
+				</div>
+
+				<div class="col-lg-3">
+					<div class="form-group">
+						<label>複数選択セレクトボックス</label>
+						<select class="form-control" id="testDuallistbox" multiple="multiple">
+							<option th:each="option : ${hanbaitenSelectBoxOptions}"
+								th:value="${option.value}"
+								th:text="${option.text}"
+								th:data-id="${option['data-id']}"></option>
+						</select>
+					</div>
+				</div>
+			</div>
+
+		</div><!-- /.container-fluid -->
+	</div>
+	
+</html>
