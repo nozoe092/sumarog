@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.smalog.constant.DBKeyLabelConstants;
 import com.smalog.dto.TokuisakiDTO;
+import com.smalog.dto.common.SelectBoxDTO;
 import com.smalog.mapper.TokuisakiMapper;
 
 @Service
@@ -25,6 +26,17 @@ public class TokuisakiService extends BaseService {
      */
     public List<TokuisakiDTO> getHanbaitenList(String tokuisakiCode, String tokuisakiName, String tokuisakiNameKana) {
         return tokuisakiMapper.getHanbaitenList(DBKeyLabelConstants.KAISHA_KUBUN_CODE_HANBAITEN.getStringValue(), DBKeyLabelConstants.STRING_FLAG_ON.getStringValue(), tokuisakiCode, tokuisakiName, tokuisakiNameKana);
+    }
+
+     /**
+     * 販売店の情報を取得する
+     * @param hanbaiten
+     * @param tokuisakiCode
+     * @param tokuisakiName
+     * @return
+     */
+    public List<TokuisakiDTO> getHanbaitenListByHanbaiten(String hanbaiten, String tokuisakiCode, String tokuisakiName) {
+        return tokuisakiMapper.getHanbaitenListByHanbaiten(DBKeyLabelConstants.KAISHA_KUBUN_CODE_HANBAITEN.getStringValue(), DBKeyLabelConstants.STRING_FLAG_ON.getStringValue(), hanbaiten, tokuisakiCode, tokuisakiName);
     }
 
     /**
@@ -59,20 +71,26 @@ public class TokuisakiService extends BaseService {
 
     /**
      * 販売店のセレクトボックス用のデータを取得する
+     * @param useDefaultRecord
      * @return
      */
-    public List<Map<String, String>> getHanbaitenSelectBoxDataList() {
-        return this.getHanbaitenSelectBoxDataList(null);
+    public List<Map<String, String>> getHanbaitenSelectBoxDataList(boolean useDefaultRecord) {
+        return this.getHanbaitenSelectBoxDataList(null, useDefaultRecord);
     }
 
     /**
      * 販売店のセレクトボックス用のデータを取得する
      * @param tokuisakiCode
+     * @param useDefaultRecord
      * @return
      */
-    public List<Map<String, String>> getHanbaitenSelectBoxDataList(String tokuisakiCode) {
-        List<TokuisakiDTO> tokuisakiDTOList = tokuisakiMapper.getSelectBoxDataList(DBKeyLabelConstants.KAISHA_KUBUN_CODE_HANBAITEN.getStringValue(), DBKeyLabelConstants.STRING_FLAG_ON.getStringValue(), tokuisakiCode);
-        return convertDTOSelectBoxData(tokuisakiDTOList, "getTokuisakiName", "getTokuisakiCode", "getKaishaKubunCode");
+    public List<Map<String, String>> getHanbaitenSelectBoxDataList(String tokuisakiCode, boolean useDefaultRecord) {
+        List<SelectBoxDTO> selectBoxDTOList = tokuisakiMapper.getSelectBoxDataList(DBKeyLabelConstants.KAISHA_KUBUN_CODE_HANBAITEN.getStringValue(), DBKeyLabelConstants.STRING_FLAG_ON.getStringValue(), tokuisakiCode);
+        List<Map<String, String>> formSelectBoxDataList = convertDTOSelectBoxData(selectBoxDTOList);
+        if (useDefaultRecord) {
+            insertSelectBoxDataStringDefaultRecord(formSelectBoxDataList);
+        }
+        return formSelectBoxDataList;
     }
 
     /**
@@ -84,4 +102,14 @@ public class TokuisakiService extends BaseService {
     private TokuisakiDTO findTokuisaki(String kaishaKubunCode, String tokuisakiCode) {
         return tokuisakiMapper.findTokuisaki(kaishaKubunCode, tokuisakiCode, DBKeyLabelConstants.STRING_FLAG_ON.getStringValue());
     }
+
+    /**
+     * ログインした得意先のデータを取得する
+     * @param tokuisakiCode
+     * @return
+     */
+    public TokuisakiDTO findTokuisakiByCode(String tokuisakiCode) {
+        return tokuisakiMapper.findTokuisakiByCode(tokuisakiCode);
+    }
+
 }

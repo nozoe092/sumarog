@@ -27,20 +27,20 @@
     </where>
   </select>
 
-  <select id="getSelectBoxDataList" resultType="com.smalog.dto.TokuisakiDTO">
+  <select id="getSelectBoxDataList" resultType="com.smalog.dto.common.SelectBoxDTO">
     SELECT
-      得意先マスタ.得意先コード AS tokuisakiCode
-      , 得意先マスタ.得意先名 AS tokuisakiName
-      , 会社区分コード AS kaishaKubunCode
+      得意先マスタ.得意先コード AS value
+      , 得意先マスタ.得意先名 AS text
     FROM
       得意先マスタ 
     <where>
       会社区分コード = #{kaishaKubunCode}
       AND ＳＬ_利用フラグ = #{slUseFlag}
-      <if test="tokuisakiCode != null and tokuisakiCode != ''">
+      <if test="tokuisakiCode != null">
         AND 得意先コード = #{tokuisakiCode}
       </if>
     </where>
+    ORDER BY 得意先コード ASC
   </select>
 
   <select id="findTokuisaki" resultType="com.smalog.dto.TokuisakiDTO">
@@ -56,6 +56,16 @@
       AND ＳＬ_利用フラグ = #{slUseFlag}
     </where>
   </select>
+
+  <select id="findTokuisakiByCode" resultType="com.smalog.dto.TokuisakiDTO">
+        SELECT
+            得意先コード AS tokuisakiCode,
+            得意先名 AS tokuisakiName
+        FROM 
+            得意先マスタ
+        WHERE 
+            得意先マスタ.得意先コード = #{tokuisakiCode}
+    </select>
 
 
 <!-- 新しいクエリの追加 -->

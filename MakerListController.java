@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,13 +13,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.smalog.constant.MenuConstants;
+import com.smalog.util.ApplicationUtils;
 import com.smalog.util.MessageUtils;
 
 
 import com.smalog.form.maker.ListForm;
+import com.smalog.service.ProjectService;
 import com.smalog.service.TokuisakiService;
 
 import jakarta.validation.Valid;
@@ -32,6 +36,10 @@ public class MakerListController extends BaseController {
 	/* Autowired */
 	private final TokuisakiService tokuisakiService;
     private final MessageUtils messageUtils;
+
+	@Autowired
+	private ProjectService projectService;
+
 
 	public MakerListController(TokuisakiService tokuisakiService, MessageUtils messageUtils) {
 		this.tokuisakiService = tokuisakiService;
@@ -48,7 +56,19 @@ public class MakerListController extends BaseController {
 		}
 		model.addAttribute(PAGE_NAME_KEY, PAGE_NAME);	// 画面名
 		model.addAttribute(SELECTED_MENU_ID_KEY, SELECTED_MENU.getId());	// メニューの選択状態
-		model.addAttribute("listForm", listForm);		 
+		model.addAttribute("listForm", listForm);	
+
+		//model.addAttribute("hanbaitenSelectBoxOptions", tokuisakiService.getHanbaitenSelectBoxDataList(true)); // 販売店のオプションを追加	
+		
+
+	// 販売店データの取得
+    List<Map<String, String>> hanbaitenSelectBoxOptions = tokuisakiService.getHanbaitenSelectBoxDataList(true);
+    model.addAttribute("hanbaitenSelectBoxOptions", hanbaitenSelectBoxOptions); // 販売店のオプションを追加
+
+    // デバッグ用のログ出力
+    for (Map<String, String> option : hanbaitenSelectBoxOptions) {
+        System.out.println("Option: " + option);
+    }
 		return "maker/list";
 	}
 
@@ -91,7 +111,8 @@ public class MakerListController extends BaseController {
 		}
 
 		 // データを取得してグリッド用に加工する
-		 tokuisakiService.getHanbaitenList(
+		 tokuisakiService.getHanbaitenListByHanbaiten(
+			listForm.getHanbaiten(), 
             listForm.getTokuisakiCode(),
             listForm.getTokuisakiName()
         ).forEach(dto -> {
@@ -104,5 +125,20 @@ public class MakerListController extends BaseController {
 
 		result.put("dataList", dataList);
 		return ResponseEntity.ok(result);
+	}
+
+
+	/**
+	 * 販売店変更時のセレクトボックスデータ取得
+	 * @param param
+	 * @return
+	 */
+	@PostMapping("/maker/change-hanbaiten-select-box")
+	@ResponseBody
+	public Map<String, Object> chanegeHanbaitenSelectBox(@RequestBody Map<String, String> param) {		
+		Map<String, Object> result = getRestSuccessfulResult();
+		result.put("projectSelectBoxOptions", projectService.getSelectBoxDataList(param.get("tokuisakiCode"), true));
+		result.put("projectMakerSelectBoxOptions", ApplicationUtils.insertFormSelectBoxStringDefaultRecord(ApplicationUtils.createFormSelectBoxEmptyDataList()));
+		return result;
 	}
 }
