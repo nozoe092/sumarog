@@ -85,4 +85,37 @@
       得意先コード ASC
   </select>
 
+  <select id="getHanbaitenListByShop" resultType="com.smalog.dto.TokuisakiDTO">
+    SELECT
+        t.得意先コード AS tokuisakiCode,
+        t.得意先名 AS tokuisakiName,
+        c.カテゴリ名 AS categoryName
+    FROM
+        得意先メーカーマスタ m
+    INNER JOIN
+        得意先マスタ t ON m.得意先コード = t.得意先コード
+    LEFT JOIN
+        SL_メーカーカテゴリ mc ON m.得意先コード = mc.得意先コード
+    LEFT JOIN
+        SL_カテゴリマスタ c ON mc.カテゴリID = c.ID 
+    WHERE
+        t.ＳＬ_利用フラグ = 1
+        AND (#{hanbaiten} IS NULL OR t.得意先コード = #{hanbaiten})
+        AND (#{category} IS NULL OR mc.カテゴリID = #{category})
+        AND (#{tokuisakiCode} IS NULL OR t.得意先コード = #{tokuisakiCode})
+        AND (#{tokuisakiName} IS NULL OR t.得意先名 LIKE CONCAT('%', #{tokuisakiName}, '%'))
+    ORDER BY
+        t.得意先コード ASC
+</select>
+
+<select id="getCategoryList" resultType="com.smalog.dto.TokuisakiDTO">
+    SELECT
+        ID AS id,
+        カテゴリ名 AS category
+    FROM
+        SL_カテゴリマスタ
+    ORDER BY
+        カテゴリ名 ASC
+</select>
+
 </mapper>

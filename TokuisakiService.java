@@ -40,6 +40,24 @@ public class TokuisakiService extends BaseService {
     }
 
     /**
+     * 販売店条件を含むメーカー情報を取得する
+     * @param hanbaiten 販売店コード
+     * @param tokuisakiCode 得意先コード
+     * @param tokuisakiName 得意先名
+     * @return メーカー情報のリスト
+     */
+    public List<TokuisakiDTO> getHanbaitenListByShop(String hanbaiten, String tokuisakiCode, String tokuisakiName,String category) {
+        return tokuisakiMapper.getHanbaitenListByShop(hanbaiten, tokuisakiCode, tokuisakiName,category);
+    }
+
+     /**
+     * カテゴリリストを取得する
+     */
+    public List<TokuisakiDTO> getCategoryList() {
+        return tokuisakiMapper.getCategoryList(); // Mapper から取得
+    }
+
+    /**
      * 販売店の情報を取得する
      * @param kaishaKubunCode
      * @param tokuisakiCode

@@ -25,6 +25,14 @@ public interface TokuisakiMapper {
                 @Param("tokuisakiCode") String tokuisakiCode,
                 @Param("tokuisakiName") String tokuisakiName);
 
+        List<TokuisakiDTO> getHanbaitenListByShop(
+                @Param("hanbaiten") String hanbaiten,
+                @Param("tokuisakiCode") String tokuisakiCode,
+                @Param("tokuisakiName") String tokuisakiName,
+                @Param("category") String category);
+
+        List<TokuisakiDTO> getCategoryList();
+
         List<SelectBoxDTO> getSelectBoxDataList(
                 @Param("kaishaKubunCode") String kaishaKubunCode, 
                 @Param("slUseFlag") String slUseFlag, 

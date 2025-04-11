@@ -20,4 +20,6 @@ public class TokuisakiDTO {
     private String faxNumber;	// ＦＡＸ番号
     private String kaishaKubunCode;	// 会社区分コード
 
+    private String category;	// 得意先コード
+
 }

@@ -24,5 +24,10 @@ public class ListForm extends BaseForm implements Serializable{
         this.hanbaiten = hanbaiten;
     }
 
+    private String category(){
+        return category;
+    }
+
+
     public ListForm() {}
 }

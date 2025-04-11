@@ -58,6 +58,10 @@ public class MakerListController extends BaseController {
 		model.addAttribute(SELECTED_MENU_ID_KEY, SELECTED_MENU.getId());	// メニューの選択状態
 		model.addAttribute("listForm", listForm);	
 
+		 // カテゴリリストの取得
+		 model.addAttribute("categoryList", tokuisakiService.getCategoryList());
+		 
+
 		//model.addAttribute("hanbaitenSelectBoxOptions", tokuisakiService.getHanbaitenSelectBoxDataList(true)); // 販売店のオプションを追加	
 		
 
@@ -111,14 +115,16 @@ public class MakerListController extends BaseController {
 		}
 
 		 // データを取得してグリッド用に加工する
-		 tokuisakiService.getHanbaitenListByHanbaiten(
+		 tokuisakiService.getHanbaitenListByShop(
 			listForm.getHanbaiten(), 
             listForm.getTokuisakiCode(),
             listForm.getTokuisakiName()
+			listForm.getCategory()
         ).forEach(dto -> {
             Map<String, String> data = new HashMap<>();
             data.put("tokuisakiCode", dto.getTokuisakiCode());
             data.put("tokuisakiName", dto.getTokuisakiName());
+			data.put("category", dto.getCategory());
             dataList.add(data);
         });
 
